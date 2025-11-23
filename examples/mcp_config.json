@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "oracle": {
+      "command": "oracle-mcp",
+      "env": {
+        "ORACLE_USER": "FCOWNER",
+        "ORACLE_PASSWORD": "your_password_here",
+        "ORACLE_DSN": "FC1070"
+      }
+    }
+  }
+}
