@@ -7,7 +7,7 @@ Quick guide to install and configure Oracle MCP server for Claude Desktop and Gi
 Install the Oracle MCP server using pip:
 
 ```bash
-pip install git+https://github.com/yourusername/oracle-mcp.git
+pip install https://github.com/Akshay-Quorum2145/Oracle-MCP
 ```
 
 Or if published to PyPI:
