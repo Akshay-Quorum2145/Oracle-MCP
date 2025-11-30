@@ -117,16 +117,17 @@ GitHub Copilot uses the same MCP configuration format. Create or edit the config
 
 ```json
 {
-  "mcpServers": {
-    "oracle": {
-      "command": "oracle-mcp",
-      "env": {
-        "ORACLE_USER": "your_username",
-        "ORACLE_PASSWORD": "your_password",
-        "ORACLE_DSN": "your_tns_alias_or_connection_string"
-      }
-    }
-  }
+	"servers": {
+	    "oracle": {
+        "command": "oracle-mcp",
+        "env": {
+            "ORACLE_USER": "FCOWNER",
+            "ORACLE_PASSWORD": "Fc_0wner",
+            "ORACLE_DSN": "FC1070"
+            }
+        }
+	},
+	"inputs": []
 }
 ```
 
