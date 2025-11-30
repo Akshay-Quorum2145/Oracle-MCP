@@ -110,7 +110,7 @@ In Claude Desktop, try asking:
 
 GitHub Copilot uses the same MCP configuration format. Create or edit the configuration file:
 
-- **VS Code**: Create `.github/copilot-mcp.json` in your workspace
+- **VS Code**: Create `.vscode/mcp.json` in your workspace
 - **Global**: `~/.config/github-copilot/mcp.json` (macOS/Linux) or `%APPDATA%\GitHub Copilot\mcp.json` (Windows)
 
 ### 2. Add Configuration
