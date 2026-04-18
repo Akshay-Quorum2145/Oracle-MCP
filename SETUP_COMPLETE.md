@@ -47,6 +47,20 @@ claude mcp add --transport stdio oracle \
      C:/Users/akshay.bachkar/Downloads/Oracle-MCP/run_server.py
 ```
 
+### Simpler Invocation
+
+Once the package is pip-installed, you can also invoke the server as a module:
+
+```bash
+claude mcp add --transport stdio oracle \
+  --env ORACLE_USER=FCOWNER \
+  --env ORACLE_PASSWORD=Fc_0wner \
+  --env ORACLE_DSN=FC1070 \
+  -- python -m oracle_mcp
+```
+
+This is the recommended form when sharing with others — it doesn't depend on a specific repo path and works as long as Python is on PATH.
+
 ## To Add to Other Projects
 
 From any other project directory, run:
@@ -55,8 +69,7 @@ claude mcp add --transport stdio oracle \
   --env ORACLE_USER=FCOWNER \
   --env ORACLE_PASSWORD=Fc_0wner \
   --env ORACLE_DSN=FC1070 \
-  -- C:/Users/akshay.bachkar/Downloads/Oracle-MCP/venv/Scripts/python.exe \
-     C:/Users/akshay.bachkar/Downloads/Oracle-MCP/run_server.py
+  -- python -m oracle_mcp
 ```
 
 ## Check Status

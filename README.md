@@ -63,7 +63,16 @@ Alternatively, use a direct connection string: `hostname:1521/service_name`
 
 ### 2. Configure MCP Client
 
-Add the Oracle MCP server to your MCP client configuration. For Claude Desktop, edit the config file:
+You can invoke the server in two ways:
+
+- **`python -m oracle_mcp`** (recommended) — portable, works whenever Python is on PATH. No reliance on the `Scripts/` directory being resolved by your MCP client.
+- **`oracle-mcp`** — the console script entry point. Only works if the Python `Scripts/` directory (e.g. `%APPDATA%\Python\Python3XX\Scripts` on Windows) is on PATH and your MCP client inherits that PATH.
+
+If `oracle-mcp` gives you errors like `oracle-mcp required by oracle-mcp is not found`, use the `python -m oracle_mcp` form instead.
+
+#### Claude Desktop
+
+Edit the config file:
 
 **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
 **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
@@ -73,7 +82,29 @@ Add the Oracle MCP server to your MCP client configuration. For Claude Desktop, 
 {
   "mcpServers": {
     "oracle": {
-      "command": "oracle-mcp",
+      "command": "python",
+      "args": ["-m", "oracle_mcp"],
+      "env": {
+        "ORACLE_USER": "your_username",
+        "ORACLE_PASSWORD": "your_password",
+        "ORACLE_DSN": "FC1070"
+      }
+    }
+  }
+}
+```
+
+#### GitHub Copilot (VS Code)
+
+Create or edit `.vscode/mcp.json` in your workspace (or add to user settings):
+
+```json
+{
+  "servers": {
+    "oracle": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["-m", "oracle_mcp"],
       "env": {
         "ORACLE_USER": "your_username",
         "ORACLE_PASSWORD": "your_password",
@@ -90,7 +121,8 @@ Add the Oracle MCP server to your MCP client configuration. For Claude Desktop, 
 {
   "mcpServers": {
     "oracle": {
-      "command": "oracle-mcp",
+      "command": "python",
+      "args": ["-m", "oracle_mcp"],
       "env": {
         "ORACLE_USER": "${ORACLE_USER}",
         "ORACLE_PASSWORD": "${ORACLE_PASSWORD}",

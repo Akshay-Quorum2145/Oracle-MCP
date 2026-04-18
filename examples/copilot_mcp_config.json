@@ -1,6 +1,7 @@
 {
-  "mcpServers": {
+  "servers": {
     "oracle": {
+      "type": "stdio",
       "command": "python",
       "args": ["-m", "oracle_mcp"],
       "env": {

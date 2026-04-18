@@ -10,6 +10,29 @@ Install the Oracle MCP server using pip:
 pip install git+https://github.com/Akshay-Quorum2145/Oracle-MCP
 ```
 
+Or if published to PyPI:
+
+```bash
+pip install oracle-mcp
+```
+
+Verify installation:
+
+```bash
+python -m oracle_mcp --help
+```
+
+## How to Invoke the Server
+
+Two ways to invoke the MCP server:
+
+| Command | Pros | Cons |
+|---|---|---|
+| `python -m oracle_mcp` **(recommended)** | Works anywhere Python is on PATH. Portable across Claude Desktop, Claude Code, GitHub Copilot, VS Code. | Slightly longer. |
+| `oracle-mcp` | Short. | Only works if Python's `Scripts/` dir (e.g. `%APPDATA%\Python\Python3XX\Scripts` on Windows) is on PATH **and** your MCP client inherits that PATH. Fails with errors like `oracle-mcp required by oracle-mcp is not found` otherwise. |
+
+If in doubt, use `python -m oracle_mcp`.
+
 ## Setup for Claude Desktop
 
 ### 1. Locate Configuration File
@@ -28,7 +51,8 @@ Edit the config file and add the following:
 {
   "mcpServers": {
     "oracle": {
-      "command": "oracle-mcp",
+      "command": "python",
+      "args": ["-m", "oracle_mcp"],
       "env": {
         "ORACLE_USER": "your_username",
         "ORACLE_PASSWORD": "your_password",
@@ -44,7 +68,8 @@ Edit the config file and add the following:
 {
   "mcpServers": {
     "oracle": {
-      "command": "oracle-mcp",
+      "command": "python",
+      "args": ["-m", "oracle_mcp"],
       "env": {
         "ORACLE_USER": "DBUSER",
         "ORACLE_PASSWORD": "mypassword",
@@ -60,7 +85,8 @@ Edit the config file and add the following:
 {
   "mcpServers": {
     "oracle": {
-      "command": "oracle-mcp",
+      "command": "python",
+      "args": ["-m", "oracle_mcp"],
       "env": {
         "ORACLE_USER": "DBUSER",
         "ORACLE_PASSWORD": "mypassword",
@@ -79,7 +105,8 @@ Add optional parameters for advanced configuration:
 {
   "mcpServers": {
     "oracle": {
-      "command": "oracle-mcp",
+      "command": "python",
+      "args": ["-m", "oracle_mcp"],
       "env": {
         "ORACLE_USER": "your_username",
         "ORACLE_PASSWORD": "your_password",
@@ -104,30 +131,33 @@ In Claude Desktop, try asking:
 - "What tables are available in the database?"
 - "Show me the structure of the EMPLOYEES table"
 
-## Setup for GitHub Copilot
+## Setup for GitHub Copilot (VS Code)
 
-### 1. Create Copilot Configuration
+GitHub Copilot's MCP support uses a slightly different config format — note `servers` (not `mcpServers`) and the required `type: "stdio"` field.
 
-GitHub Copilot uses the same MCP configuration format. Create or edit the configuration file:
+### 1. Create Copilot MCP Configuration
 
-- **VS Code**: Create `.vscode/mcp.json` in your workspace
-- **Global**: `~/.config/github-copilot/mcp.json` (macOS/Linux) or `%APPDATA%\GitHub Copilot\mcp.json` (Windows)
+Create one of the following files:
+
+- **Workspace**: `.vscode/mcp.json` in your workspace root
+- **User-global**: Open the Command Palette (`Ctrl+Shift+P`) → `MCP: Open User Configuration`, or edit `~/.config/github-copilot/mcp.json` (macOS/Linux) / `%APPDATA%\GitHub Copilot\mcp.json` (Windows)
 
 ### 2. Add Configuration
 
 ```json
 {
-	"servers": {
-	    "oracle": {
-        "command": "oracle-mcp",
-        "env": {
-            "ORACLE_USER": "FCOWNER",
-            "ORACLE_PASSWORD": "Fc_0wner",
-            "ORACLE_DSN": "FC1070"
-            }
-        }
-	},
-	"inputs": []
+  "servers": {
+    "oracle": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["-m", "oracle_mcp"],
+      "env": {
+        "ORACLE_USER": "your_username",
+        "ORACLE_PASSWORD": "your_password",
+        "ORACLE_DSN": "your_tns_alias_or_connection_string"
+      }
+    }
+  }
 }
 ```
 
@@ -147,7 +177,7 @@ Use GitHub Copilot chat and ask:
 ```
 ORACLE_DSN=ORCL
 ```
-Requires `tnsnames.ora` configuration.
+Requires `tnsnames.ora` configuration. Make sure `TNS_ADMIN` env variable points to the directory containing it, or place it in the default Oracle location.
 
 ### Easy Connect
 ```
@@ -189,25 +219,41 @@ Ask Claude or Copilot:
 
 ## Troubleshooting
 
+### Error: `oracle-mcp required by oracle-mcp is not found`
+
+This means the MCP client cannot find the `oracle-mcp` executable. It typically happens on Windows when the Python `Scripts/` directory is not inherited by the MCP client process.
+
+**Fix:** Switch your MCP config from `"command": "oracle-mcp"` to `"command": "python", "args": ["-m", "oracle_mcp"]`. This bypasses the Scripts directory entirely.
+
 ### Server Not Found
-- Verify `oracle-mcp` is installed: `pip show oracle-mcp`
-- Check that Python's Scripts directory is in PATH
+
+- Verify package is installed: `pip show oracle-mcp`
+- Verify Python can import it: `python -m oracle_mcp --help`
+- If you're using `oracle-mcp` as the command, check that Python's `Scripts/` directory is on PATH
+
+### Crashing on Startup with `ORACLE_USER environment variable is required`
+
+Running the server directly from a terminal (e.g. `oracle-mcp` or `python -m oracle_mcp`) without setting env vars gives this error — that's expected. When launched by an MCP client, env vars come from the `"env"` block in the config. Make sure all three (`ORACLE_USER`, `ORACLE_PASSWORD`, `ORACLE_DSN`) are present there.
 
 ### Connection Failed
+
 - Verify database credentials
 - Check database is accessible from your network
 - Test connection with SQL Developer or similar tool
 
 ### TNS Error
+
 - Verify `tnsnames.ora` location
 - Check TNS alias exists in `tnsnames.ora`
+- Set `TNS_ADMIN` env variable to the directory containing `tnsnames.ora`
 - Try using direct connection string instead
 
 ### Permission Denied
+
 - Ensure database user has SELECT permission
 - For DML operations, check write permissions
 - Verify user can access required schemas
 
 ## Support
 
-For issues and questions, visit the [GitHub repository](https://github.com/yourusername/oracle-mcp).
+For issues and questions, visit the [GitHub repository](https://github.com/Akshay-Quorum2145/Oracle-MCP).
